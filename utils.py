@@ -38,7 +38,7 @@ def prefilter_items(data, take_n_popular=5000, item_features=None):
     data['price'] = data['sales_value'] / (np.maximum(data['quantity'], 1))
         
     # Уберем слишком дешевые товары (на них не заработаем). 1 покупка из рассылок стоит 60 руб.
-    data = data[data['price'] >= 1]
+    data = data[data['price'] > 1]
 
     # Уберем слишком дорогие товарыs
     data = data[data['price'] <= 100]
@@ -53,7 +53,7 @@ def prefilter_items(data, take_n_popular=5000, item_features=None):
     data.loc[~data['item_id'].isin(top), 'item_id'] = 999999
 
     #удаляем признак с ценой
-    data = data.drop(['price'], axis=1)
+    #data = data.drop(['price'], axis=1)
 
     return data
 
