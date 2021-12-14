@@ -46,9 +46,9 @@ class MainRecommender:
         """Готовит user-item матрицу"""
         user_item_matrix = pd.pivot_table(data,
                                           index='user_id',
-                                          columns='item_id',
-                                          values='quantity',  # Можно пробовать другие варианты
-                                          aggfunc='count',
+                                          columns='item_id',  #,было quantity, count
+                                          values='sales_value',  # лучше с sales_value, sum!!!
+                                          aggfunc='sum',
                                           fill_value=0
                                           )
 
