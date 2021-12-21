@@ -68,43 +68,29 @@ def popularity_recommendation(data, n=5):
     
     return recs.tolist()
 
-def postfilter_items(recommendations, data, new_item_features, N=5):
+def postfilter_items(recommendations, data, item_features, N=5):
     """Постфильтрация товаров"""
-    # Уникальность (убираем дубли)
+    # Уникальность
     unique_recommendations = []
     [unique_recommendations.append(item) for item in recommendations if item not in unique_recommendations]
     
-    # Разные категории (оставляем только один товар из каждой категории)
+    # Разные категории
     categories_used = []
-    dif_cat_recommendations = []
+    final_recommendations = []
     
     CATEGORY_NAME = 'sub_commodity_desc'
     for item in unique_recommendations:
         category = item_features.loc[item_features['item_id'] == item, CATEGORY_NAME].values[0]
         
         if category not in categories_used:
-            dif_cat_recommendations.append(item)
+            final_recommendations.append(item)
             
         unique_recommendations.remove(item)
         categories_used.append(category)
     
-    # 1 дорогой товар, > 7 долларов
-    dif_cat_recommendations_price = [new_item_features.loc[new_item_features['item_id'] == rec,'price'].values[0] for rec in dif_cat_recommendations]
-    rec_item_price_dict = dict(list(zip(dif_cat_recommendations, dif_cat_recommendations_price)))
-    rec_price_5 = list(rec_item_price_dict.values())[:5]
-
-    if any(price > 7 for price in rec_price_5):
-        final_recommendations = dif_cat_recommendations
-    else:
-        expensive_item_dict = {item : price for item, price in rec_item_price_dict.items() if price > 7}
-        del dif_cat_recommendations[4]
-        final_recommendations = dif_cat_recommendations.append(list(expensive_item_dict.keys())[0])
-    
-    # Количество рекомендаций (для каждого юзера 5 рекомендаций, иногда модели могут возвращать < 5)
     n_rec = len(final_recommendations)
     if n_rec < N:
-        # Дополняем топом популярных (например)
-        final_recommendations.extend(popularity_recommendation(data, n=5)[:N - n_rec])  # (!) это не совсем верно
+        final_recommendations.extend(popularity_recommendation(data, n=5)[:N - n_rec])
     else:
         final_recommendations = final_recommendations[:N]
     

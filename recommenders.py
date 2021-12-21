@@ -46,7 +46,7 @@ class MainRecommender:
         """Готовит user-item матрицу"""
         user_item_matrix = pd.pivot_table(data,
                                           index='user_id',
-                                          columns='item_id',  #,было quantity, count
+                                          columns='item_id',  #было quantity, count
                                           values='sales_value',  # лучше с sales_value, sum!!!
                                           aggfunc='sum',
                                           fill_value=0
@@ -85,7 +85,7 @@ class MainRecommender:
 
     @staticmethod
     def fit(user_item_matrix, n_factors=20, regularization=0.001, iterations=15, num_threads=4):
-        """Обучает ALS"""
+        """Обучает ALS""" 
 
         model = AlternatingLeastSquares(factors=n_factors,
                                         regularization=regularization,
